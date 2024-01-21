@@ -20,6 +20,14 @@ export default {
         }
       }
     `,
+    createBook: gql`
+      mutation createBook($title: String!, $author: String!) {
+        createBook(title: $title, author: $author) {
+          title
+          author
+        }
+      }
+    `,
   },
   Subscriptions: {},
 };
