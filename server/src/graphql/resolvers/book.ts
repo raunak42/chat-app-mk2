@@ -26,6 +26,9 @@ const resolvers = {
       return newBook;
     },
   },
+  Subscription:{
+    
+  }
 };
 
 export default resolvers;

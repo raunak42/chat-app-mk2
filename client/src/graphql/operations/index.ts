@@ -20,6 +20,7 @@ export default {
         }
       }
     `,
+    
     createBook: gql`
       mutation createBook($title: String!, $author: String!) {
         createBook(title: $title, author: $author) {
@@ -29,5 +30,15 @@ export default {
       }
     `,
   },
-  Subscriptions: {},
+  Subscriptions: {
+    COMMENTS_SUBSCRIPTION: gql`
+      subscription OnCommentAdded($postID: ID!) {
+        commentAdded(postID: $postID) {
+          id
+          content
+        }
+      }
+    `,
+    
+  },
 };

@@ -13,6 +13,14 @@ const typeDefs = gql`
   type Mutation {
     createBook(title: String, author: String): Book
   }
-`;  
+
+  type Subscription {
+    commentAdded(postID: ID!): Comment
+  }
+  type Comment {
+    id: ID
+    content: String!
+  }
+`;
 
 export default typeDefs;

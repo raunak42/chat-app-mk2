@@ -1,15 +1,15 @@
 import { ApolloServer } from "@apollo/server";
-import { startStandaloneServer } from "@apollo/server/standalone";
 import { expressMiddleware } from "@apollo/server/express4";
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
-import express from "express";
-import http from "http";
-import cors from "cors";
 import { makeExecutableSchema } from "@graphql-tools/schema";
-import typeDefs from "./graphql/typeDefs";
+import cors from "cors";
+import express from "express";
+import http, { createServer } from "http";
+import { WebSocketServer } from "ws";
+import { useServer } from "graphql-ws/lib/use/ws";
+import mongoose from "mongoose";
 import resolvers from "./graphql/resolvers";
-import * as dotenv from "dotenv";
-import mongoose from 'mongoose';
+import typeDefs from "./graphql/typeDefs";
 
 async function main() {
   //   dotenv.config();
@@ -21,21 +21,40 @@ async function main() {
     resolvers,
   });
 
-  // The ApolloServer constructor requires two parameters: your schema
-  // definition and your set of resolvers.
+  const wsServer = new WebSocketServer({
+    server: httpServer,
+    path: "/subscriptions",
+  });
+
+  const serverCleanup = useServer({ schema }, wsServer);
+
   const server = new ApolloServer({
     schema,
-    plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
+    plugins: [
+      ApolloServerPluginDrainHttpServer({ httpServer }),
+      {
+        async serverWillStart() {
+          return {
+            async drainServer() {
+              await serverCleanup.dispose();
+            },
+          };
+        },
+      },
+    ],
   });
 
   await server.start();
 
   const corsOptions = {
-    origin: ["http://locallhost:3000", "http://localhost:5173"],
+    origin: ["http://localhost:3000", "http://localhost:5173"],
     credentials: true,
   };
 
-  mongoose.connect("mongodb+srv://raunaklanjewar42:OruPoBWyclykpMqr@cluster0.1jdjqpo.mongodb.net/", { dbName: "Book" })
+  mongoose.connect(
+    "mongodb+srv://raunaklanjewar42:OruPoBWyclykpMqr@cluster0.1jdjqpo.mongodb.net/",
+    { dbName: "Book" }
+  );
 
   app.use(
     "/graphql",

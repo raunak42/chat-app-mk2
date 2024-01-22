@@ -1,4 +1,4 @@
-import { Button, Stack, TextField } from "@mui/material";
+import { Button, Stack, TextField, Typography } from "@mui/material";
 import bookOperations from "./graphql/operations";
 import { useMutation, useQuery } from "@apollo/client";
 import { useState } from "react";
@@ -27,6 +27,8 @@ function DisplayBooks() {
 function App() {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
+
+  // const [message, setMessage] = useState("");
 
   const [createBook, { loading: mutationLoading, error: mutationError }] =
     useMutation(bookOperations.Mutations.createBook, {
@@ -69,6 +71,10 @@ function App() {
     }
   };
 
+  const handleSend = async() =>{
+    
+  }
+
   return (
     <div>
       <Button onClick={handleQueryClick}>Make Query</Button>
@@ -76,22 +82,39 @@ function App() {
       {error && <p>Error : {error.message}</p>}
       {data && <DisplayBooks />}
       <br></br>
-      <Stack width={"20vw"} spacing={3}>
-        Create Book
-        <TextField
-          label="Title"
-          value={title}
-          onChange={(event) => setTitle(event.target.value)}
-        ></TextField>
-        <TextField
-          label="Author"
-          value={author}
-          onChange={(event) => setAuthor(event.target.value)}
-        ></TextField>
-        <Button variant="contained" onClick={handleSubmit}>
-          Submit
-        </Button>
-      </Stack>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-evenly",
+        }}
+      >
+        <Stack width={"20vw"} spacing={3}>
+          <Typography>Create Book</Typography>
+          <TextField
+            label="Title"
+            value={title}
+            onChange={(event) => setTitle(event.target.value)}
+          ></TextField>
+          <TextField
+            label="Author"
+            value={author}
+            onChange={(event) => setAuthor(event.target.value)}
+          ></TextField>
+          <Button variant="contained" onClick={handleSubmit}>
+            Submit
+          </Button>
+        </Stack>
+        <Stack width={"20vw"} spacing={3}>
+          <Typography>Send Message</Typography>
+          <TextField
+            label="Message"
+            placeholder="type here"
+            // onChange={(event) => setMessage(event.target.value)}
+          ></TextField>
+          <Button variant="contained" onClick={handleSend}>Send</Button>
+        </Stack>
+      </div>
 
       {mutationLoading && <p>Creating book...</p>}
       {mutationError && <p>Error : {mutationError.message}</p>}
