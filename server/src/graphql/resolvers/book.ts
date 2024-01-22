@@ -1,22 +1,28 @@
-import books from "../../db";
+import { Book } from "../../models/book";
 // Resolvers define how to fetch the types defined in your schema.
 // This resolver retrieves books from the "books" array above.
 
 const resolvers = {
   Query: {
-    books: () => books,
+    books: async() => await Book.find()
   },
   Mutation: {
-    createBook: (_: any, args: { title: string; author: string }) => {
-      console.log("Before Mutation:", books);
+    createBook: async (_: any, args: { title: string; author: string }) => {
 
       const { title, author } = args;
       const newBook = {
         title,
         author,
       };
-      books.push(newBook);
-      console.log("After Mutation:", books);
+
+      const book = await Book.findOne({ title: newBook.title });
+      if(book){
+        return book;
+      }else{
+        const addNewBook = new Book(newBook);
+        await addNewBook.save();
+      }
+
       return newBook;
     },
   },

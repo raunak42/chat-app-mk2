@@ -61,6 +61,9 @@ function App() {
       // Clear the input fields after submitting the mutation
       setTitle("");
       setAuthor("");
+
+      localStorage.setItem("Title", title);
+      localStorage.setItem("Author", author);
     } catch (error) {
       console.error("Error while creating book:", error);
     }

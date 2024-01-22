@@ -9,6 +9,7 @@ import { makeExecutableSchema } from "@graphql-tools/schema";
 import typeDefs from "./graphql/typeDefs";
 import resolvers from "./graphql/resolvers";
 import * as dotenv from "dotenv";
+import mongoose from 'mongoose';
 
 async function main() {
   //   dotenv.config();
@@ -33,6 +34,8 @@ async function main() {
     origin: ["http://locallhost:3000", "http://localhost:5173"],
     credentials: true,
   };
+
+  mongoose.connect("mongodb+srv://raunaklanjewar42:OruPoBWyclykpMqr@cluster0.1jdjqpo.mongodb.net/", { dbName: "Book" })
 
   app.use(
     "/graphql",
