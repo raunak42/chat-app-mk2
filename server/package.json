@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon src/index.ts",
-    "start": "pm2 start src/index.ts --chat_server"
+    "start": "pm2 start src/index.ts --name chat_server"
   },
   
   "keywords": [],
