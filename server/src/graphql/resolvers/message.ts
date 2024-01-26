@@ -1,39 +1,30 @@
-import { PubSub } from 'graphql-subscriptions';
+// resolvers.ts
 
-interface Message {
-  id: number;
-  content: string;
+import { PubSub } from "graphql-subscriptions";
+
+interface ChatMessage {
   sender: string;
+  content: string;
 }
 
-const messages: Message[] = [];
-let messageCounter = 1;
-
+const messages: ChatMessage[] = [];
 const pubsub = new PubSub();
 
 const resolvers = {
   Query: {
-    messages: (): Message[] => messages,
+    // Any additional queries
   },
   Mutation: {
-    sendMessage: (_: any, { content, sender }: { content: string, sender: string }): Message => {
-      const newMessage: Message = {
-        id: messageCounter++,
-        content,
-        sender,
-      };
-
-      messages.push(newMessage);
-
-      // Publish the new message to subscribers
-      pubsub.publish('MESSAGE_ADDED', { messageAdded: newMessage });
-
-      return newMessage;
+    sendMessage: (_: any, { sender, content }: ChatMessage) => {
+      const message = { sender, content };
+      messages.push(message);
+      pubsub.publish("CHAT_MESSAGE", { chatMessage: message });
+      return true;
     },
   },
   Subscription: {
-    messageAdded: {
-      subscribe: () => pubsub.asyncIterator('MESSAGE_ADDED'),
+    chatMessage: {
+      subscribe: () => pubsub.asyncIterator("CHAT_MESSAGE"),
     },
   },
 };

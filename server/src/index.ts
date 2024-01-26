@@ -1,4 +1,4 @@
-import { ApolloServer } from "@apollo/server";
+import { ApolloServer, ApolloServerOptionsWithSchema } from "@apollo/server";
 import { expressMiddleware } from "@apollo/server/express4";
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
 import { makeExecutableSchema } from "@graphql-tools/schema";
@@ -10,6 +10,9 @@ import { useServer } from "graphql-ws/lib/use/ws";
 import mongoose from "mongoose";
 import resolvers from "./graphql/resolvers";
 import typeDefs from "./graphql/typeDefs";
+import { PubSub } from "graphql-subscriptions";
+
+const pubsub = new PubSub();
 
 async function main() {
   //   dotenv.config();
@@ -42,7 +45,8 @@ async function main() {
         },
       },
     ],
-  });
+    context: () => ({ pubsub }),
+  } as ApolloServerOptionsWithSchema<any>);
 
   await server.start();
 
@@ -60,6 +64,9 @@ async function main() {
     "/graphql",
     cors<cors.CorsRequest>(corsOptions),
     express.json(),
+    // express.urlencoded({ extended: true }),
+    // express.raw({ type: "application/graphql" }),
+    // express.raw({ type: "application/json" }),
     expressMiddleware(server)
   );
 

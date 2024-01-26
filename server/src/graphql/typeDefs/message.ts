@@ -3,21 +3,16 @@ import gql from "graphql-tag";
 
 const typeDefs = gql`
   type Message {
-    id: ID!
-    content: String!
     sender: String!
-  }
-
-  type Query {
-    messages: [Message]
+    content: String!
   }
 
   type Mutation {
-    sendMessage(content: String!, sender: String!): Message
+    sendMessage(sender: String, content: String!): Boolean
   }
 
   type Subscription {
-    messageAdded: Message
+    chatMessage: Message
   }
 `;
 
